@@ -20,6 +20,11 @@ unsigned int BulletMaterialId;
 
 // TODO:
 // #include "YourPhysicsClass.h"
+#include "source/PhysicEngine.h"
+
+PhysicEngine PlayerObj;
+PhysicEngine EnemyObj;
+PhysicEngine BulletObj;
 
 /// <summary>
 /// Default constructor
@@ -60,6 +65,8 @@ void ArtilleryGame::Initialize()
 	m_PlayerTank->Position = glm::vec3(-10, 0, -10);
 	m_EnemyTank->Position = glm::vec3(10, 0, 10);
 	m_Bullet->Position = glm::vec3(10, 2, 0);
+
+	StartNewGame();
 }
 
 /// <summary>
@@ -84,6 +91,22 @@ void ArtilleryGame::StartNewGame()
 {
 	DEBUG_PRINT("ArtilleryGame::StartNewGame\n");
 	// TODO:
+
+	//PhysicEngine PlayerPos;
+	//PhysicEngine EnemyPos;
+	//PhysicEngine BulletPos;
+
+	//random player and enemy tanks
+	PlayerObj.RandPos();
+	EnemyObj.RandPos();
+
+	//reset bullet to player tank position
+	BulletObj.Pos = PlayerObj.Pos;
+
+	//draw
+	m_PlayerTank->Position = glm::vec3(PlayerObj.Pos.get_X(), 0, PlayerObj.Pos.get_Z());
+	m_EnemyTank->Position = glm::vec3(EnemyObj.Pos.get_X(), 0, EnemyObj.Pos.get_Z());
+	m_Bullet->Position = glm::vec3(BulletObj.Pos.get_X(), 0, BulletObj.Pos.get_Z());
 }
 
 /// <summary>
@@ -100,8 +123,74 @@ void ArtilleryGame::StartNewGame()
 /// </summary>
 void ArtilleryGame::GameUpdate()
 {
-	// DEBUG_PRINT("ArtilleryGame::GameUpdate\n");
+	//DEBUG_PRINT("ArtilleryGame::GameUpdate\n");
 	// TODO:
+	if (GDP_IsKeyReleased('n') || GDP_IsKeyReleased('N'))
+	{
+		StartNewGame();
+		//DisplayTextToUser("test");
+	}
+	if (GDP_IsKeyPressed('w') || GDP_IsKeyPressed('W')) //||GDP_IsKeyHeldDown('w') || GDP_IsKeyHeldDown('W'))
+	{
+		Move(UP);
+	}
+	if (GDP_IsKeyPressed('a') || GDP_IsKeyPressed('A')) //|| GDP_IsKeyHeldDown('a') || GDP_IsKeyHeldDown('A'))
+	{
+		Move(LEFT);
+	}
+	if (GDP_IsKeyPressed('s') || GDP_IsKeyPressed('S')) //|| GDP_IsKeyHeldDown('s') || GDP_IsKeyHeldDown('S'))
+	{
+		Move(DOWN);
+	}
+	if (GDP_IsKeyPressed('d') || GDP_IsKeyPressed('D')) //|| GDP_IsKeyHeldDown('d') || GDP_IsKeyHeldDown('D'))
+	{
+		Move(RIGHT);
+	}
+	if (GDP_IsKeyPressed('1'))
+	{
+		SetProjectileType(1);
+	}
+	if (GDP_IsKeyPressed('2'))
+	{
+		SetProjectileType(2);
+	}
+	if (GDP_IsKeyPressed('3'))
+	{
+		SetProjectileType(3);
+	}
+	if (GDP_IsKeyPressed('4'))
+	{
+		SetProjectileType(4);
+	}
+	if (GDP_IsKeyPressed('5'))
+	{
+		SetProjectileType(5);
+	}
+	if (GDP_IsKeyPressed(KEY_DOWN))
+	{
+		SetFireDirection(vector3(0, 0, -1));
+	}
+	if (GDP_IsKeyPressed(KEY_LEFT))
+	{
+		SetFireDirection(vector3(1, 0, 0));
+	}
+	if (GDP_IsKeyPressed(KEY_UP))
+	{
+		SetFireDirection(vector3(0, 0, 1));
+	}
+	if (GDP_IsKeyPressed(KEY_RIGHT))
+	{
+		SetFireDirection(vector3(-1, 0, 0));
+	}
+	if (GDP_IsKeyPressed(KEY_SPACEBAR))
+	{
+		fire();
+	}
+	if (BulletObj.isFire)
+	{
+		BulletObj.TrajectoryCal();
+		m_Bullet->Position = glm::vec3(BulletObj.Pos.get_X(), BulletObj.Pos.get_Y(), BulletObj.Pos.get_Z());
+	}
 }
 
 /// <summary>
@@ -111,6 +200,77 @@ void ArtilleryGame::GameUpdate()
 void ArtilleryGame::DisplayTextToUser(const std::string& text)
 {
 	std::cout << text << "\n";
+}
+
+void ArtilleryGame::Move(int Dir)
+{
+
+	switch (Dir)
+	{
+	case(UP):
+		if (m_PlayerTank->Position.z < MaxPos)
+		{
+			m_PlayerTank->Position.z++;
+			m_PlayerTank->Rotation = glm::quat(0.7f, 0, 0.7f, 0);
+			m_Bullet->Position = m_PlayerTank->Position;
+			m_Bullet->Rotation = glm::quat(1, 0, 0, 0);
+			PlayerObj.Pos.set_Z(m_PlayerTank->Position.z);
+			BulletObj.Pos.set_Z(m_Bullet->Position.z);
+		}
+		break;
+	case(DOWN):
+		if (m_PlayerTank->Position.z > MinPos)
+		{
+			m_PlayerTank->Position.z--;
+			m_PlayerTank->Rotation = glm::quat(0.7f, 0, -0.7f, 0);
+			m_Bullet->Position = m_PlayerTank->Position;
+			m_Bullet->Rotation = glm::quat(0, 0, 1, 0);
+			PlayerObj.Pos.set_Z(m_PlayerTank->Position.z);
+			BulletObj.Pos.set_Z(m_Bullet->Position.z);
+		}
+		break;
+	case(LEFT):
+		if (m_PlayerTank->Position.x < MaxPos)
+		{
+			m_PlayerTank->Position.x++;
+			m_PlayerTank->Rotation = glm::quat(0, 0, 1, 0);
+			m_Bullet->Position = m_PlayerTank->Position;
+			m_Bullet->Rotation = glm::quat(0.7f, 0, 0.7f, 0);
+			PlayerObj.Pos.set_X(m_PlayerTank->Position.x);
+			BulletObj.Pos.set_X(m_Bullet->Position.x);
+		}
+		break;
+	case(RIGHT):
+		if (m_PlayerTank->Position.x > MinPos)
+		{
+			m_PlayerTank->Position.x--;
+			m_PlayerTank->Rotation = glm::quat(1, 0, 0, 0);
+			m_Bullet->Position = m_PlayerTank->Position;
+			m_Bullet->Rotation = glm::quat(0.7f, 0, -0.7f, 0);
+			PlayerObj.Pos.set_X(m_PlayerTank->Position.x);
+			BulletObj.Pos.set_X(m_Bullet->Position.x);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void ArtilleryGame::SetProjectileType(int type)
+{
+	float baseVelocity = 10;
+
+	//BulletObj.Velocity.set_X();
+}
+
+void ArtilleryGame::SetFireDirection(vector3 Direction)
+{
+	PlayerObj.FireDirection += Direction;
+}
+
+void ArtilleryGame::fire()
+{
+	BulletObj.isFire = true;
 }
 
 GameObject* ArtilleryGame::CreateGameObjectByType(const std::string& type)

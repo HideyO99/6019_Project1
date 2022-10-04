@@ -155,10 +155,14 @@
   <ItemGroup>
     <ClCompile Include="ArtilleryGame.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="source\PhysicEngine.cpp" />
+    <ClCompile Include="source\vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArtilleryGame.h" />
     <ClInclude Include="AssetInfo.h" />
+    <ClInclude Include="source\PhysicEngine.h" />
+    <ClInclude Include="source\vector3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
