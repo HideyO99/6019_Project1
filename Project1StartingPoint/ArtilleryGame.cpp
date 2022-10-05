@@ -169,18 +169,23 @@ void ArtilleryGame::GameUpdate()
 	if (GDP_IsKeyPressed(KEY_DOWN))
 	{
 		SetFireDirection(vector3(0, 0, -1));
+		m_PlayerTank->Rotation = RotationCal(PlayerObj.FireDirection);
+
 	}
 	if (GDP_IsKeyPressed(KEY_LEFT))
 	{
 		SetFireDirection(vector3(1, 0, 0));
+		m_PlayerTank->Rotation = RotationCal(PlayerObj.FireDirection);
 	}
 	if (GDP_IsKeyPressed(KEY_UP))
 	{
 		SetFireDirection(vector3(0, 0, 1));
+		m_PlayerTank->Rotation = RotationCal(PlayerObj.FireDirection);
 	}
 	if (GDP_IsKeyPressed(KEY_RIGHT))
 	{
 		SetFireDirection(vector3(-1, 0, 0));
+		m_PlayerTank->Rotation = RotationCal(PlayerObj.FireDirection);
 	}
 	if (GDP_IsKeyPressed(KEY_SPACEBAR))
 	{
@@ -189,6 +194,11 @@ void ArtilleryGame::GameUpdate()
 	if (BulletObj.isFire)
 	{
 		BulletObj.TrajectoryCal();
+		m_Bullet->Position = glm::vec3(BulletObj.Pos.get_X(), BulletObj.Pos.get_Y(), BulletObj.Pos.get_Z());
+	}
+	else
+	{
+		BulletObj.Pos = PlayerObj.Pos;
 		m_Bullet->Position = glm::vec3(BulletObj.Pos.get_X(), BulletObj.Pos.get_Y(), BulletObj.Pos.get_Z());
 	}
 }
@@ -211,9 +221,11 @@ void ArtilleryGame::Move(int Dir)
 		if (m_PlayerTank->Position.z < MaxPos)
 		{
 			m_PlayerTank->Position.z++;
-			m_PlayerTank->Rotation = glm::quat(0.7f, 0, 0.7f, 0);
+			m_PlayerTank->Rotation = RotationCal(90);
+			//m_PlayerTank->Rotation = glm::quat(0.7f, 0, 0.7f, 0);
 			m_Bullet->Position = m_PlayerTank->Position;
-			m_Bullet->Rotation = glm::quat(1, 0, 0, 0);
+			m_Bullet->Rotation = RotationCal(0);
+			//m_Bullet->Rotation = glm::quat(1, 0, 0, 0);
 			PlayerObj.Pos.set_Z(m_PlayerTank->Position.z);
 			BulletObj.Pos.set_Z(m_Bullet->Position.z);
 		}
@@ -222,9 +234,11 @@ void ArtilleryGame::Move(int Dir)
 		if (m_PlayerTank->Position.z > MinPos)
 		{
 			m_PlayerTank->Position.z--;
-			m_PlayerTank->Rotation = glm::quat(0.7f, 0, -0.7f, 0);
+			m_PlayerTank->Rotation = RotationCal(270);
+			//m_PlayerTank->Rotation = glm::quat(0.7f, 0, -0.7f, 0);
 			m_Bullet->Position = m_PlayerTank->Position;
-			m_Bullet->Rotation = glm::quat(0, 0, 1, 0);
+			m_Bullet->Rotation = RotationCal(180);
+			//m_Bullet->Rotation = glm::quat(0, 0, 1, 0);
 			PlayerObj.Pos.set_Z(m_PlayerTank->Position.z);
 			BulletObj.Pos.set_Z(m_Bullet->Position.z);
 		}
@@ -233,9 +247,11 @@ void ArtilleryGame::Move(int Dir)
 		if (m_PlayerTank->Position.x < MaxPos)
 		{
 			m_PlayerTank->Position.x++;
-			m_PlayerTank->Rotation = glm::quat(0, 0, 1, 0);
+			m_PlayerTank->Rotation = RotationCal(180);
+			//m_PlayerTank->Rotation = glm::quat(0, 0, 1, 0);
 			m_Bullet->Position = m_PlayerTank->Position;
-			m_Bullet->Rotation = glm::quat(0.7f, 0, 0.7f, 0);
+			m_Bullet->Rotation = RotationCal(90);
+			//m_Bullet->Rotation = glm::quat(0.7f, 0, 0.7f, 0);
 			PlayerObj.Pos.set_X(m_PlayerTank->Position.x);
 			BulletObj.Pos.set_X(m_Bullet->Position.x);
 		}
@@ -244,9 +260,11 @@ void ArtilleryGame::Move(int Dir)
 		if (m_PlayerTank->Position.x > MinPos)
 		{
 			m_PlayerTank->Position.x--;
-			m_PlayerTank->Rotation = glm::quat(1, 0, 0, 0);
+			m_PlayerTank->Rotation = RotationCal(0);
+			//m_PlayerTank->Rotation = glm::quat(1, 0, 0, 0);
 			m_Bullet->Position = m_PlayerTank->Position;
-			m_Bullet->Rotation = glm::quat(0.7f, 0, -0.7f, 0);
+			m_Bullet->Rotation = RotationCal(270);
+			//m_Bullet->Rotation = glm::quat(0.7f, 0, -0.7f, 0);
 			PlayerObj.Pos.set_X(m_PlayerTank->Position.x);
 			BulletObj.Pos.set_X(m_Bullet->Position.x);
 		}
@@ -258,19 +276,36 @@ void ArtilleryGame::Move(int Dir)
 
 void ArtilleryGame::SetProjectileType(int type)
 {
-	float baseVelocity = 10;
-
-	//BulletObj.Velocity.set_X();
+	BulletObj.ProjectileType = (float) type;
+	
 }
 
 void ArtilleryGame::SetFireDirection(vector3 Direction)
 {
 	PlayerObj.FireDirection += Direction;
+	BulletObj.FireDirection = PlayerObj.FireDirection;
 }
 
 void ArtilleryGame::fire()
 {
 	BulletObj.isFire = true;
+	BulletObj.Velocity.set_Y(BulletObj.ProjectileType * BASE_VELOCITY);
+}
+
+glm::quat ArtilleryGame::RotationCal(float degree)
+{
+	float radians = glm::radians(degree);
+	float w = cos(radians /2);
+	float y = sin(radians / 2);
+	return glm::quat(w, 0, y, 0);
+}
+
+glm::quat ArtilleryGame::RotationCal(vector3 Direction)
+{
+	float radians = glm::atan((Direction.get_Z()) / (Direction.get_X()));
+	float w = cos(radians / 2);
+	float y = sin(radians / 2);
+	return glm::quat(w, 0, y, 0);
 }
 
 GameObject* ArtilleryGame::CreateGameObjectByType(const std::string& type)

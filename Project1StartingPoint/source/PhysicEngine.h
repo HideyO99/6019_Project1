@@ -2,7 +2,7 @@
 
 #include "vector3.h"
 
-#define GFORCE 9.8f
+#define GFORCE -9.8f
 //enum BulletVelocity
 //{
 //
@@ -21,8 +21,9 @@ public:
 	vector3 FireDirection;
 	float TrajectoryCal();
 
-	float mass;
+	//float mass;
 	bool isFire;
+	float ProjectileType;
 
 //	int Get_XPos();
 //	int Get_ZPos();

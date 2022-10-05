@@ -12,7 +12,7 @@ PhysicEngine::PhysicEngine()
 	Acc = vector3(0, GFORCE, 0);
 	FireDirection = vector3(0, 0, 0);
 
-	mass = 0;
+	ProjectileType = 1;
 	isFire = false;
 }
 
@@ -28,6 +28,20 @@ void PhysicEngine::RandPos()
 }
 float PhysicEngine::TrajectoryCal()
 {
+	float YPos = this->Pos.get_Y();
+	//this->FireDirection.get_X()
+	if (YPos >= 0.f)
+	{
+
+
+		this->Pos += (this->FireDirection / 100);
+		// v=u+at
+		this->Velocity = this->Velocity + this->Acc / 100;
+		this->Pos.set_Y(YPos + this->Velocity.get_Y() / 100);
+	}
+	else {
+		this->isFire = false;
+	}
 	return 0.0f;
 }
 //
