@@ -110,3 +110,5 @@ void vector3::operator/=(const float RHS)
 	this->y /= RHS;
 	this->z /= RHS;
 }
+
+

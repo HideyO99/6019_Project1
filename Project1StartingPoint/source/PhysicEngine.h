@@ -19,17 +19,14 @@ public:
 	vector3 Velocity;
 	vector3 Acc;
 	vector3 FireDirection;
-	float TrajectoryCal();
+	void TrajectoryCal();
 
 	//float mass;
 	bool isFire;
 	float ProjectileType;
+	bool isHitGround;
+	bool isHitTarget();
+	float VelecityXYZ;
 
-//	int Get_XPos();
-//	int Get_ZPos();
-//private:
-//	int x;
-//	int y;
-//	int z;
 };
 

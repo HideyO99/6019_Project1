@@ -17,7 +17,8 @@ using namespace gdp;
 #define KEY_LEFT		'j'
 #define KEY_RIGHT		'l'
 #define KEY_SPACEBAR	0x20
-#define BASE_VELOCITY	5
+#define BASE_VELOCITY	2
+
 
 class ArtilleryGame {
 public:
@@ -37,6 +38,7 @@ public:
 	void fire();
 	glm::quat RotationCal(float degree);
 	glm::quat RotationCal(vector3 Direction);
+	bool HitCheck();
 
 private:
 	GameObject* CreateGameObjectByType(const std::string& type);
