@@ -17,7 +17,7 @@ using namespace gdp;
 #define KEY_LEFT		'j'
 #define KEY_RIGHT		'l'
 #define KEY_SPACEBAR	0x20
-#define BASE_VELOCITY	2
+#define BASE_VELOCITY	3
 
 
 class ArtilleryGame {

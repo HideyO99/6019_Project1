@@ -1,6 +1,7 @@
 #include "PhysicEngine.h"
 #include <stdlib.h>
 
+
 PhysicEngine::PhysicEngine()
 {
 
@@ -21,10 +22,12 @@ PhysicEngine::~PhysicEngine()
 
 void PhysicEngine::RandPos()
 {
+	
 	Pos.set_X((float)(rand() % 40 - 20));
 	Pos.set_Y(0.f);
 	Pos.set_Z((float)(rand() % 40 - 20));
 }
+
 void PhysicEngine::TrajectoryCal()
 {
 	float YPos = this->Pos.get_Y();
@@ -34,6 +37,7 @@ void PhysicEngine::TrajectoryCal()
 		// v=u+at
 		this->Velocity = this->Velocity + this->Acc / 100;
 		this->Pos.set_Y(YPos + this->Velocity.get_Y() / 100);
+		//this->Pos += this->Velocity / 100;
 	}
 	else {
 		this->isFire = false;

@@ -97,6 +97,7 @@ void ArtilleryGame::StartNewGame()
 	//PhysicEngine BulletPos;
 
 	//random player and enemy tanks
+	srand((unsigned)time(NULL));
 	PlayerObj.RandPos();
 	EnemyObj.RandPos();
 
@@ -170,22 +171,25 @@ void ArtilleryGame::GameUpdate()
 	{
 		SetFireDirection(vector3(0, 0, -1));
 		m_PlayerTank->Rotation = RotationCal(PlayerObj.FireDirection);
-
+		m_Bullet->Rotation = RotationCal(BulletObj.FireDirection);
 	}
 	if (GDP_IsKeyPressed(KEY_LEFT))
 	{
 		SetFireDirection(vector3(1, 0, 0));
 		m_PlayerTank->Rotation = RotationCal(PlayerObj.FireDirection);
+		m_Bullet->Rotation = RotationCal(BulletObj.FireDirection);
 	}
 	if (GDP_IsKeyPressed(KEY_UP))
 	{
 		SetFireDirection(vector3(0, 0, 1));
 		m_PlayerTank->Rotation = RotationCal(PlayerObj.FireDirection);
+		m_Bullet->Rotation = RotationCal(BulletObj.FireDirection);
 	}
 	if (GDP_IsKeyPressed(KEY_RIGHT))
 	{
 		SetFireDirection(vector3(-1, 0, 0));
 		m_PlayerTank->Rotation = RotationCal(PlayerObj.FireDirection);
+		m_Bullet->Rotation = RotationCal(BulletObj.FireDirection) + glm::quat();
 	}
 	if (GDP_IsKeyPressed(KEY_SPACEBAR))
 	{
@@ -206,12 +210,13 @@ void ArtilleryGame::GameUpdate()
 		if (HitCheck())
 		{
 			DisplayTextToUser("Hit!!");
+			m_EnemyTank->Rotation = glm::quat(1, 0, 1, 0);
 			DisplayTextToUser("Press \'n\' to restart a game");
 		}
 		else
 		{
 			DisplayTextToUser("Miss!! Hit a ground at");
-			//std::cout << "x:" << m_Bullet->Position.x << "\ny: " << m_Bullet->Position.y << "\nz: " << m_Bullet->Position.z<<"\n";
+			std::cout << "x:" << m_Bullet->Position.x << "\ny: " << m_Bullet->Position.y << "\nz: " << m_Bullet->Position.z<<"\n";
 		}
 		BulletObj.isHitGround = false;
 	}
@@ -237,13 +242,15 @@ void ArtilleryGame::Move(int Dir)
 			PlayerObj.Pos += vector3(0, 0, 1);
 			m_PlayerTank->Position = glm::vec3(PlayerObj.Pos.get_X(), 0, PlayerObj.Pos.get_Z());
 			//m_PlayerTank->Rotation = glm::quat(0.7f, 0, 0.7f, 0);
-			m_PlayerTank->Rotation = RotationCal(90);				
+			m_PlayerTank->Rotation = RotationCal(90);	
+			PlayerObj.FireDirection = vector3(0,0,1);
+			BulletObj.FireDirection = PlayerObj.FireDirection;
 			if (!BulletObj.isFire)
 			{
 				BulletObj.Pos = PlayerObj.Pos;
 				m_Bullet->Position = glm::vec3(BulletObj.Pos.get_X(), BulletObj.Pos.get_Y(), BulletObj.Pos.get_Z());
 				//m_Bullet->Rotation = glm::quat(1, 0, 0, 0);
-				m_Bullet->Rotation = RotationCal(0);
+				m_Bullet->Rotation = RotationCal(90);
 			}
 		}
 		break;
@@ -254,12 +261,14 @@ void ArtilleryGame::Move(int Dir)
 			m_PlayerTank->Position = glm::vec3(PlayerObj.Pos.get_X(), 0, PlayerObj.Pos.get_Z());
 			//m_PlayerTank->Rotation = glm::quat(0.7f, 0, -0.7f, 0);
 			m_PlayerTank->Rotation = RotationCal(270);
+			PlayerObj.FireDirection = vector3(0, 0, -1);
+			BulletObj.FireDirection = PlayerObj.FireDirection;
 			if (!BulletObj.isFire)
 			{
 				BulletObj.Pos = PlayerObj.Pos;
 				m_Bullet->Position = glm::vec3(BulletObj.Pos.get_X(), BulletObj.Pos.get_Y(), BulletObj.Pos.get_Z());
 				//m_Bullet->Rotation = glm::quat(0, 0, 1, 0);
-				m_Bullet->Rotation = RotationCal(180);
+				m_Bullet->Rotation = RotationCal(270);
 			}
 		}
 		break;
@@ -270,12 +279,14 @@ void ArtilleryGame::Move(int Dir)
 			m_PlayerTank->Position = glm::vec3(PlayerObj.Pos.get_X(), 0, PlayerObj.Pos.get_Z());
 			//m_PlayerTank->Rotation = glm::quat(0, 0, 1, 0);
 			m_PlayerTank->Rotation = RotationCal(180);
+			PlayerObj.FireDirection = vector3(1, 0, 0);
+			BulletObj.FireDirection = PlayerObj.FireDirection;
 			if (!BulletObj.isFire)
 			{
 				BulletObj.Pos = PlayerObj.Pos;
 				m_Bullet->Position = glm::vec3(BulletObj.Pos.get_X(), BulletObj.Pos.get_Y(), BulletObj.Pos.get_Z());
 				//m_Bullet->Rotation = glm::quat(0.7f, 0, 0.7f, 0);
-				m_Bullet->Rotation = RotationCal(90);
+				m_Bullet->Rotation = RotationCal(180);
 			}
 		}
 		break;
@@ -286,12 +297,14 @@ void ArtilleryGame::Move(int Dir)
 			m_PlayerTank->Position = glm::vec3(PlayerObj.Pos.get_X(), 0, PlayerObj.Pos.get_Z());
 			//m_PlayerTank->Rotation = glm::quat(1, 0, 0, 0);
 			m_PlayerTank->Rotation = RotationCal(0);
+			PlayerObj.FireDirection = vector3(-1, 0, 0);
+			BulletObj.FireDirection = PlayerObj.FireDirection;
 			if (!BulletObj.isFire)
 			{
 				BulletObj.Pos = PlayerObj.Pos;
 				m_Bullet->Position = glm::vec3(BulletObj.Pos.get_X(), BulletObj.Pos.get_Y(), BulletObj.Pos.get_Z());
 				//m_Bullet->Rotation = glm::quat(0.7f, 0, -0.7f, 0);
-				m_Bullet->Rotation = RotationCal(270);
+				m_Bullet->Rotation = RotationCal(0);
 			}
 		}
 		break;
@@ -314,10 +327,12 @@ void ArtilleryGame::SetFireDirection(vector3 Direction)
 
 void ArtilleryGame::fire()
 {
+	//float Radian_XZ = glm::atan((BulletObj.FireDirection.get_Z()) / (BulletObj.FireDirection.get_X()));
+	//float V_X = BulletObj.ProjectileType * BASE_VELOCITY * sin(Radian_XZ);
+	//float V_Z = BulletObj.ProjectileType * BASE_VELOCITY * cos(Radian_XZ);
 	BulletObj.isFire = true;
-	BulletObj.VelecityXYZ = BulletObj.ProjectileType * BASE_VELOCITY;
-
 	BulletObj.Velocity.set_Y(BulletObj.ProjectileType * BASE_VELOCITY);
+	//BulletObj.Velocity = vector3(V_X,BulletObj.ProjectileType * BASE_VELOCITY,V_Z);
 	//BulletObj.Pos.set_Y(1);
 }
 
@@ -331,7 +346,7 @@ glm::quat ArtilleryGame::RotationCal(float degree)
 
 glm::quat ArtilleryGame::RotationCal(vector3 Direction)
 {
-	float radians = glm::atan((Direction.get_Z()) / (Direction.get_X()));
+	float radians = glm::atan(Direction.get_Z(), -Direction.get_X());
 	float w = cos(radians / 2);
 	float y = sin(radians / 2);
 	return glm::quat(w, 0, y, 0);
@@ -339,9 +354,9 @@ glm::quat ArtilleryGame::RotationCal(vector3 Direction)
 
 bool ArtilleryGame::HitCheck()
 {
-	int x = round(abs(m_Bullet->Position.x - m_EnemyTank->Position.x));
-	int y = round(abs(m_Bullet->Position.y - m_EnemyTank->Position.y));
-	int z = round(abs(m_Bullet->Position.z - m_EnemyTank->Position.z));
+	int x = (int)round(abs(m_Bullet->Position.x - m_EnemyTank->Position.x));
+	int y = (int)round(abs(m_Bullet->Position.y - m_EnemyTank->Position.y));
+	int z = (int)round(abs(m_Bullet->Position.z - m_EnemyTank->Position.z));
 	if ((x <= 1) && (y <= 1) && (z <= 1))
 	{
 		return true;
