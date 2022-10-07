@@ -13,7 +13,6 @@ PhysicEngine::PhysicEngine()
 	ProjectileType = 1;
 	isFire = false;
 	isHitGround = false;
-	VelecityXYZ = 0;
 }
 
 PhysicEngine::~PhysicEngine()
@@ -37,7 +36,6 @@ void PhysicEngine::TrajectoryCal()
 		// v=u+at
 		this->Velocity = this->Velocity + this->Acc / 100;
 		this->Pos.set_Y(YPos + this->Velocity.get_Y() / 100);
-		//this->Pos += this->Velocity / 100;
 	}
 	else {
 		this->isFire = false;

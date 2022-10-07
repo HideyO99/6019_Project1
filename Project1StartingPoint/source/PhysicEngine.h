@@ -26,7 +26,6 @@ public:
 	float ProjectileType;
 	bool isHitGround;
 	bool isHitTarget();
-	float VelecityXYZ;
 
 };
 

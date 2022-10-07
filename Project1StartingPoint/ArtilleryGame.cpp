@@ -327,13 +327,10 @@ void ArtilleryGame::SetFireDirection(vector3 Direction)
 
 void ArtilleryGame::fire()
 {
-	//float Radian_XZ = glm::atan((BulletObj.FireDirection.get_Z()) / (BulletObj.FireDirection.get_X()));
-	//float V_X = BulletObj.ProjectileType * BASE_VELOCITY * sin(Radian_XZ);
-	//float V_Z = BulletObj.ProjectileType * BASE_VELOCITY * cos(Radian_XZ);
+
 	BulletObj.isFire = true;
 	BulletObj.Velocity.set_Y(BulletObj.ProjectileType * BASE_VELOCITY);
-	//BulletObj.Velocity = vector3(V_X,BulletObj.ProjectileType * BASE_VELOCITY,V_Z);
-	//BulletObj.Pos.set_Y(1);
+
 }
 
 glm::quat ArtilleryGame::RotationCal(float degree)
